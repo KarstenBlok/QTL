@@ -32,8 +32,8 @@ def vergelijkingen (file_dictionary):
         for marker2 in range(marker1+1, len(file_dictionary)):
             tweede_marker = eerste_marker_list[marker2]
             aantal = 0
-            for a in range(len(eerste_marker_list)):
-                eerste_marker = eerste_marker_list[a]
+            for a in range(len(file_dictionary[eerste_marker_list[marker1]])):
+                eerste_marker = eerste_marker_list[marker1]
                 if file_dictionary[eerste_marker][a] == "-" or file_dictionary[tweede_marker][a] == "-":
                     continue
                 elif file_dictionary[eerste_marker][a] != file_dictionary[tweede_marker][a]:

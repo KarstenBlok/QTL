@@ -1,6 +1,6 @@
 import string
 import itertools
-import csv
+
 
 def read_file(bestand):
     marker = ""
@@ -67,7 +67,8 @@ def distance(score_dict):
             #        afstandlijst_final.append((marker_split[1], score_list[i][1]))
              #   elif max_marker == marker_split[1]:
               #      afstandlijst_final.append((marker_split[1], score_list[i][0]))
-    afstandlijst.append((max_marker, 0))
+
+    afstandlijst.append(("BH.147L/BH.147L", 0))
     return afstandlijst, max_marker
 
 
@@ -76,17 +77,16 @@ def write_csv(afstandlijst, max_marker):
     for j in range(len(afstandlijst)):
         markers = afstandlijst[j][0].split(",")[0]
         marker_split = markers.split("/")
-        print(marker_split[0])
         if max_marker == marker_split[0]:
             markers_lijst.append(marker_split[1])
         else:
             markers_lijst.append(marker_split[0])
-    markers_lijst.append(max_marker)
     with open('afstandlijst', 'w') as output_file:
         for i in range(len(markers_lijst)):
             output_file.write(str(markers_lijst[i])+",")
             output_file.write(str(afstandlijst[i][1]))
             output_file.write("\n")
+
 
 def main():
     bestand = "CvixLer-MarkerSubset-LG1.txt"
@@ -95,4 +95,6 @@ def main():
     score_dict = factoren(data_dict, totaal)
     afstandlijst, max_marker = distance(score_dict)
     write_csv(afstandlijst, max_marker)
+
+
 main()

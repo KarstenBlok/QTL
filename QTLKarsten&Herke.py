@@ -1,5 +1,7 @@
 import string
 import itertools
+import csv
+
 def read_file(bestand):
     marker = ""
     file_dictionary = {}
@@ -9,9 +11,7 @@ def read_file(bestand):
         # zorgt ervoor dat het bestand pas vanaf regel 7 wordt gelezen
         for i in range(7):
             line = file.readline()
-        # alles regels met een marker beginnen met een letter. deze functie kijkt of de regel begint met een letter.
-        # als dit het geval is, maakt hij van de marker een key voor de dictionary. alle regels tot de volgende marker
-        # worden toegevoegd aan de dictionary.
+
         for line in file:
             if line.startswith(tuple(string.ascii_letters)) or not line.strip():
                 if marker:
@@ -22,9 +22,9 @@ def read_file(bestand):
                     marker = line.split()[0]
             else:
                 data.append(line.split())
+        totaal = len(merged)
         file_dictionary[marker] = merged
-        print(file_dictionary.keys())
-    return file_dictionary
+    return file_dictionary, totaal
 
 
 def vergelijkingen (file_dictionary):
@@ -40,15 +40,59 @@ def vergelijkingen (file_dictionary):
                     continue
                 elif file_dictionary[eerste_marker][a] != file_dictionary[tweede_marker][a]:
                     aantal += 1
-                key = str(eerste_marker) + "-" + str(tweede_marker)
+                key = str(eerste_marker) + "/" + str(tweede_marker)
             data_dict[key] = aantal
-    print(data_dict)
+    return data_dict
 
+
+def factoren(data_dict, totaal):
+    score_dict = {}
+    for markers, counts in data_dict.items():
+        score_dict[markers] = (counts/totaal)*100
+    return(score_dict)
+
+
+def distance(score_dict):
+    afstandlijst = []
+    score_list = sorted(score_dict.items(), key=lambda
+            item: item[1], reverse=True)
+    max_marker = score_list[0][0].split("/")[0]
+    for i in range(len(score_list)):
+        if max_marker in score_list[i][0]:
+            afstandlijst.append(score_list[i])
+        #for j in range(len(afstandlijst)):
+         #       markers = afstandlijst[j][0].split(",")[0]
+          #      marker_split = markers.split("-")
+           #     if max_marker == marker_split[0]:
+            #        afstandlijst_final.append((marker_split[1], score_list[i][1]))
+             #   elif max_marker == marker_split[1]:
+              #      afstandlijst_final.append((marker_split[1], score_list[i][0]))
+    afstandlijst.append((max_marker, 0))
+    return afstandlijst, max_marker
+
+
+def write_csv(afstandlijst, max_marker):
+    markers_lijst = []
+    for j in range(len(afstandlijst)):
+        markers = afstandlijst[j][0].split(",")[0]
+        marker_split = markers.split("/")
+        print(marker_split[0])
+        if max_marker == marker_split[0]:
+            markers_lijst.append(marker_split[1])
+        else:
+            markers_lijst.append(marker_split[0])
+    markers_lijst.append(max_marker)
+    with open('afstandlijst', 'w') as output_file:
+        for i in range(len(markers_lijst)):
+            output_file.write(str(markers_lijst[i])+",")
+            output_file.write(str(afstandlijst[i][1]))
+            output_file.write("\n")
 
 def main():
     bestand = "CvixLer-MarkerSubset-LG1.txt"
-    file_dictionary = read_file(bestand)
-    print(file_dictionary)
-    vergelijkingen(file_dictionary)
-
+    file_dictionary, totaal = read_file(bestand)
+    data_dict = vergelijkingen(file_dictionary)
+    score_dict = factoren(data_dict, totaal)
+    afstandlijst, max_marker = distance(score_dict)
+    write_csv(afstandlijst, max_marker)
 main()

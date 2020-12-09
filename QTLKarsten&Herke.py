@@ -13,15 +13,17 @@ def read_file(bestand):
         # als dit het geval is, maakt hij van de marker een key voor de dictionary. alle regels tot de volgende marker
         # worden toegevoegd aan de dictionary.
         for line in file:
-            if line.startswith(tuple(string.ascii_letters)):
+            if line.startswith(tuple(string.ascii_letters)) or not line.strip():
                 if marker:
                     merged = list(itertools.chain.from_iterable(data))
                     file_dictionary[marker] = merged
                     data = []
-                marker = line.split()[0]
+                if line.strip():
+                    marker = line.split()[0]
             else:
                 data.append(line.split())
         file_dictionary[marker] = merged
+        print(file_dictionary.keys())
     return file_dictionary
 
 
@@ -46,6 +48,7 @@ def vergelijkingen (file_dictionary):
 def main():
     bestand = "CvixLer-MarkerSubset-LG1.txt"
     file_dictionary = read_file(bestand)
+    print(file_dictionary)
     vergelijkingen(file_dictionary)
 
 main()

@@ -1,6 +1,6 @@
 import string
 import itertools
-from scipy.stats import chisquare
+
 
 def read_file(bestand):
     marker = ""
@@ -16,7 +16,8 @@ def read_file(bestand):
             if line.startswith(tuple(string.ascii_letters)) or not line.strip():
                 if marker:
                     merged = list(itertools.chain.from_iterable(data))
-                    file_dictionary[marker] = merged
+                    if chi_quare(merged):
+                        file_dictionary[marker] = merged
                     data = []
                 if line.strip():
                     marker = line.split()[0]
@@ -26,6 +27,22 @@ def read_file(bestand):
         file_dictionary[marker] = merged
     return file_dictionary, totaal
 
+
+def chi_quare(merged):
+    print(merged)
+    count_a = merged.count("a")
+    count_b = merged.count("b")
+    expected_a = len(merged) / 2
+    expected_b = len(merged) / 2
+
+    temp_a = ((count_a - expected_a)**2) / expected_a
+    temp_b = ((count_b - expected_b)**2) / expected_b
+
+    outcome = temp_a + temp_b
+    if outcome <= 3.84:
+        return True
+    else:
+        return False
 
 def vergelijkingen (file_dictionary):
     data_dict = {}

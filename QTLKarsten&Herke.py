@@ -1,6 +1,6 @@
 import string
 import itertools
-
+from scipy.stats import chisquare
 
 def read_file(bestand):
     marker = ""
@@ -55,8 +55,10 @@ def factoren(data_dict, totaal):
 def distance(score_dict):
     afstandlijst = []
     score_list = sorted(score_dict.items(), key=lambda
-            item: item[1], reverse=True)
+            item: item[1])
     max_marker = score_list[0][0].split("/")[0]
+    afstandlijst.append(("GROUP"+"/"+max_marker, 1))
+    afstandlijst.append((max_marker+"/"+max_marker, 0))
     for i in range(len(score_list)):
         if max_marker in score_list[i][0]:
             afstandlijst.append(score_list[i])
@@ -67,8 +69,7 @@ def distance(score_dict):
             #        afstandlijst_final.append((marker_split[1], score_list[i][1]))
              #   elif max_marker == marker_split[1]:
               #      afstandlijst_final.append((marker_split[1], score_list[i][0]))
-
-    afstandlijst.append(("BH.147L/BH.147L", 0))
+    print(len(afstandlijst))
     return afstandlijst, max_marker
 
 
@@ -81,9 +82,10 @@ def write_csv(afstandlijst, max_marker):
             markers_lijst.append(marker_split[1])
         else:
             markers_lijst.append(marker_split[0])
-    with open('afstandlijst', 'w') as output_file:
+    print(afstandlijst)
+    with open('afstandlijst.mct', 'w') as output_file:
         for i in range(len(markers_lijst)):
-            output_file.write(str(markers_lijst[i])+",")
+            output_file.write(str(markers_lijst[i])+"\t")
             output_file.write(str(afstandlijst[i][1]))
             output_file.write("\n")
 
